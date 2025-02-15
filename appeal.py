@@ -11,7 +11,7 @@ def process_score(value):
     """
     if isinstance(value, str):  # Ensure value is a string
         adjust = 0
-        if value.startswith("-"):
+        if value.endswith("-"):
             adjust -= 0.33
         if value.endswith("+"):
             adjust += 0.33
@@ -29,6 +29,7 @@ def process_score(value):
 data = pd.read_csv("2025interviewscores.csv")
 
 # Apply multiple conditions correctly using the bitwise '&' operator
+#can toggle here between UK and international
 filtered_data = (data["Ucas Cycle"] == 2025) & \
                 (data["FINAL COURSE - Course Group"] == "Computer Science") & \
                 (data["UK/International Domicile"] == "UK"or "International") & \
@@ -47,4 +48,24 @@ sorted_data = filtered_data.sort_values(by="Average Interview Score", ascending=
 
 # Print the sorted DataFrame
 print(sorted_data[["Average Interview Score"]])
+
+filtered_data2 = (data["Ucas Cycle"] == 2025) & \
+                (data["FINAL COURSE - Course Group"] == "Computer Science") & \
+                (data["UK/International Domicile"] == "International") & \
+                (data["Offer?"] == "Y")
+filtered_data2 = data[filtered_data2].copy()
+filtered_data2.to_csv("filtered_data2.csv", index=False)
+# Identify columns that contain interview scores
+interview_columns = [col for col in data.columns if "Score" in col]
+
+# Apply the function to each row and compute the adjusted mean
+filtered_data2.loc[:, "Average Interview Score"] = filtered_data2[interview_columns].apply(
+    lambda row: np.nanmean([process_score(val) for val in row]), axis=1
+)# Sort by Average Interview Score in ascending order
+
+sorted_data = filtered_data2.sort_values(by="Average Interview Score", ascending=True)
+
+# Print the sorted DataFrame
+print(sorted_data[["Average Interview Score"]])
+
 
