@@ -31,7 +31,7 @@ data = pd.read_csv("2025interviewscores.csv")
 # Apply multiple conditions correctly using the bitwise '&' operator
 filtered_data = (data["Ucas Cycle"] == 2025) & \
                 (data["FINAL COURSE - Course Group"] == "Computer Science") & \
-                (data["UK/International Domicile"] == "UK") & \
+                (data["UK/International Domicile"] == "UK"or "International") & \
                 (data["Offer?"] == "Y")
 filtered_data = data[filtered_data].copy()
 filtered_data.to_csv("filtered_data.csv", index=False)
